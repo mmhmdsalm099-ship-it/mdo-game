@@ -1,221 +1,144 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MDO Coin</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>MDO Miner</title>
+<script src="https://telegram.org"></script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;user-select:none}
-body{background:#0a0a0a;color:#fff;min-height:100vh;padding-bottom:80px}
-.top{display:flex;justify-content:space-between;padding:14px 16px}
-.top b{color:#f5c542;font-size:18px}
-.price{text-align:center;font-size:46px;font-weight:900;color:#f5c542;direction:ltr}
-.badges{display:flex;gap:10px;justify-content:center;margin:12px 0}
-.badge{border:1.5px solid #f5c542;border-radius:999px;padding:8px 16px;font-size:14px;font-weight:700;background:#1a1405}
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;user-select:none;-webkit-tap-highlight-color:transparent}
+body{background:radial-gradient(circle at 50% 35%, #2b1d05 0%, #0d0902 65%, #050402 100%);color:#fff;min-height:100vh;padding-bottom:85px;overflow-x:hidden}
 
-/* تصميم العملة الذهبية */
-.coin-wrap{width:260px;height:260px;margin:20px auto;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform 0.1s;box-shadow:0 0 50px #f5c54244}
-.coin-wrap:active{transform:scale(0.94)}
+/* Splash Screen */
+#splash{position:fixed;inset:0;background:radial-gradient(circle at center, #261804 0%, #050301 100%);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.6s ease}
+.splash-eye{width:140px;height:140px;border-radius:50%;border:2px solid #f5c542;box-shadow:0 0 40px #f5c54288, inset 0 0 30px #f5c542;display:flex;align-items:center;justify-content:center;margin-bottom:24px;background:radial-gradient(circle, #ffae00 10%, #4a2c00 45%, #000 80%)}
+.splash-pupil{width:24px;height:85px;background:#000;border-radius:50%;box-shadow:0 0 15px #ff9900}
+.splash-sub{color:#d4af37;letter-spacing:6px;font-size:14px;font-weight:700;margin-bottom:6px}
+.splash-title{font-size:54px;font-weight:900;background:linear-gradient(180deg, #fff6b3 0%, #f5c542 50%, #996b00 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:4px;filter:drop-shadow(0 4px 15px rgba(245,197,66,0.4))}
 
-.energy{padding:0 18px}
-.energy-top{display:flex;justify-content:space-between;font-weight:800;color:#f5c542}
-.bar{height:14px;background:#2a2a2a;border-radius:99px;overflow:hidden;margin:8px 0}
-.fill{height:100%;background:#f5c542;width:100%;transition:width 0.2s}
-.small{text-align:center;color:#aaa;font-size:12px}
-.streak{padding:16px 18px}
-.streak-top{display:flex;justify-content:space-between;font-weight:800}
-.days{display:flex;justify-content:space-between;margin-top:12px}
-.day{text-align:center;font-size:12px}
-.circle{width:42px;height:42px;border:2px solid #666;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 4px}
-.circle.done{background:#f5c542;color:#000;border-color:#f5c542}
-.claim{margin:10px 18px;background:#444;color:#bbb;border:0;padding:14px;border-radius:12px;width:calc(100% - 36px);font-weight:800}
-.page{display:none;padding:18px}
+/* Top Header */
+.header{display:flex;justify-content:space-between;align-items:flex-start;padding:12px 14px}
+.user-info h3{font-size:15px;font-weight:800;display:flex;align-items:center;gap:5px;margin-bottom:6px}
+.verified{color:#3897f0;font-size:14px}
+.status-row{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.lvl-badge{background:linear-gradient(90deg,#5c4108,#2e1f03);border:1px solid #d4af37;border-radius:6px;padding:3px 8px;font-size:11px;font-weight:800;color:#ffe680}
+.online-badge{background:#0b2e1d;border:1px solid #10b981;border-radius:99px;padding:3px 9px;font-size:10px;font-weight:800;color:#34d399;display:flex;align-items:center;gap:4px}
+.dot{width:6px;height:6px;background:#10b981;border-radius:50%;box-shadow:0 0 6px #10b981}
+.lvl-prog{background:#1a150c;border:1px solid #594318;border-radius:99px;padding:3px 10px;font-size:10px;color:#e5c158;display:inline-block}
+
+.right-info{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.wallet-pill{background:#17130b;border:1px solid #6e521b;border-radius:99px;padding:5px 12px;font-size:12px;font-weight:700;color:#f5e1a4}
+.uid-pill{background:#14110a;border:1px solid #423212;border-radius:99px;padding:4px 10px;font-size:11px;color:#b89f5d}
+
+/* Assets Box */
+.assets-wrap{text-align:center;margin:4px auto 10px;position:relative;max-width:320px}
+.assets-label{font-size:11px;letter-spacing:3px;color:#f5c542;font-weight:800;margin-bottom:4px;text-shadow:0 0 8px #f5c542}
+.assets-box{background:linear-gradient(180deg, rgba(46,32,6,0.9) 0%, rgba(18,12,2,0.95) 100%);border:1.5px solid #d4af37;border-radius:14px;padding:10px 18px;box-shadow:0 0 25px rgba(212,175,55,0.25), inset 0 0 12px rgba(212,175,55,0.2);display:inline-flex;align-items:center;gap:10px}
+.assets-val{font-size:28px;font-weight:900;color:#fff;letter-spacing:0.5px}
+.assets-sym{font-size:20px;font-weight:800;color:#f5c542;border-left:1.5px solid #6e521b;padding-left:10px}
+
+/* Green Live Mining Pill */
+.live-earn{background:linear-gradient(180deg, #0d3b26 0%, #062115 100%);border:1.5px solid #10b981;border-radius:12px;padding:7px 20px;display:inline-flex;align-items:center;gap:8px;margin-top:8px;box-shadow:0 0 20px rgba(16,185,129,0.25)}
+.live-earn span{font-size:22px;font-weight:900;color:#34d399;letter-spacing:0.5px}
+.live-earn small{font-size:13px;font-weight:800;color:#a7f3d0}
+
+/* Center Coin & Floating Icons */
+.arena{position:relative;display:flex;justify-content:center;align-items:center;margin:14px 0}
+.coin-btn{width:215px;height:215px;border-radius:50%;cursor:pointer;transition:transform 0.08s;box-shadow:0 0 55px rgba(245,197,66,0.35);position:relative;z-index:2}
+.coin-btn:active{transform:scale(0.95)}
+
+.side-btn{position:absolute;width:44px;height:44px;border-radius:50%;background:radial-gradient(circle,#2e2108,#120c02);border:1.5px solid #d4af37;display:flex;align-items:center;justify-content:center;color:#f5c542;font-weight:900;font-size:18px;box-shadow:0 0 15px rgba(212,175,55,0.3);cursor:pointer;z-index:3}
+.btn-share{right:16px;top:-20px}
+.btn-live{right:16px;top:45px;border-color:#ef4444;flex-direction:column;font-size:8px;color:#fff;background:#2b0909}
+.btn-left1{left:16px;bottom:35px}
+.btn-left2{left:16px;bottom:-20px}
+
+/* Energy Bar & Gold Claim Button */
+.controls{padding:0 20px;margin-top:6px}
+.energy-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.bolt-circle{width:36px;height:36px;border-radius:50%;background:radial-gradient(circle,#3d2b07,#171002);border:1.5px solid #f5c542;display:flex;align-items:center;justify-content:center;color:#f5c542;font-size:18px;box-shadow:0 0 12px #f5c54266;flex-shrink:0}
+.energy-track{flex:1;height:18px;background:#1a1306;border:1.5px solid #b8860b;border-radius:99px;padding:2px;position:relative;overflow:hidden}
+.energy-fill{height:100%;background:linear-gradient(90deg,#b8860b,#f5c542,#fff099);border-radius:99px;width:100%;transition:width 0.2s}
+.energy-txt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;color:#fff;text-shadow:0 1px 2px #000}
+
+.claim-btn{width:100%;padding:15px;border-radius:16px;border:2px solid #fff099;background:linear-gradient(180deg, #ffe680 0%, #e6a817 45%, #9e6b00 100%);color:#2b1900;font-size:26px;font-weight:900;letter-spacing:2px;cursor:pointer;box-shadow:0 6px 25px rgba(245,197,66,0.45), inset 0 2px 4px #fff;text-shadow:0 1px 0 rgba(255,255,255,0.6);transition:transform 0.1s}
+.claim-btn:active{transform:scale(0.97)}
+
+/* Pages */
+.page{display:none}
 .page.active{display:block}
-.task{background:#1a1a1a;border:1px solid #333;padding:14px;border-radius:12px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
-.task button{background:#f5c542;color:#000;border:0;padding:8px 14px;border-radius:8px;font-weight:800;cursor:pointer}
-.task button:disabled{background:#555;color:#999;cursor:not-allowed}
-.nav{position:fixed;bottom:0;left:0;right:0;background:#111;border-top:1px solid #333;display:flex;justify-content:space-around;padding:10px 0;font-size:11px;text-align:center;z-index:99}
-.nav div{color:#888;cursor:pointer;padding:4px}
-.nav .active{color:#f5c542}
-@keyframes floatUp{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-40px)}}
+.sub-page{padding:18px}
+.sub-page h2{color:#f5c542;font-size:20px;margin-bottom:14px;border-bottom:1px solid #3d2c0a;padding-bottom:8px}
+.card{background:linear-gradient(180deg,#1f1708,#120d04);border:1px solid #594112;border-radius:14px;padding:14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.card button{background:linear-gradient(180deg,#f5c542,#b8860b);color:#1f1400;border:0;padding:8px 16px;border-radius:8px;font-weight:900;cursor:pointer}
+.card button:disabled{background:#333;color:#777}
+
+/* Bottom Navigation */
+.nav{position:fixed;bottom:0;left:0;right:0;background:#0a0804;border-top:1px solid #38290b;display:flex;justify-content:space-around;padding:8px 4px 10px;z-index:99}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;color:#8a7b5c;font-size:11px;font-weight:700;cursor:pointer;flex:1}
+.nav-icon{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1.5px solid transparent}
+.nav-item.active{color:#f5c542}
+.nav-item.active .nav-icon{background:radial-gradient(circle,#3d2b08,#140e02);border-color:#f5c542;box-shadow:0 0 12px rgba(245,197,66,0.35)}
+.nav-item svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2}
+@keyframes floatUp{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-45px)}}
 </style>
 </head>
 <body>
 
-<div class="top"><b>🪙 MDO</b><span>🔔 🔍</span></div>
+<!-- Splash Screen -->
+<div id="splash">
+  <div class="splash-eye"><div class="splash-pupil"></div></div>
+  <div class="splash-sub">WELCOME TO</div>
+  <div class="splash-title">MDO</div>
+</div>
 
-<div id="page-home" class="page active">
-  <div class="price"><span id="bal">0.500</span> MDO</div>
-  <div class="badges">
-    <div class="badge">⛏️ MDO Miner (Lv.<span id="lvl">1</span>)</div>
-    <div class="badge">🌐 #210060 global</div>
-  </div>
-
-  <!-- عملة MDO المرسومة بالكود -->
-  <div class="coin-wrap" onclick="mine(event)">
-    <svg width="260" height="260" viewBox="0 0 260 260">
-      <defs>
-        <radialGradient id="goldGrad" cx="35%" cy="35%" r="65%">
-          <stop offset="0%" stop-color="#fff3a1"/>
-          <stop offset="45%" stop-color="#f5c542"/>
-          <stop offset="85%" stop-color="#b8860b"/>
-          <stop offset="100%" stop-color="#7a5600"/>
-        </radialGradient>
-        <linearGradient id="rimGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#ffe875"/>
-          <stop offset="100%" stop-color="#8c6200"/>
-        </linearGradient>
-      </defs>
-      <!-- الإطار الخارجي -->
-      <circle cx="130" cy="130" r="126" fill="url(#rimGrad)" stroke="#5c4000" stroke-width="4"/>
-      <!-- جسم العملة -->
-      <circle cx="130" cy="130" r="112" fill="url(#goldGrad)" stroke="#ffe875" stroke-width="2"/>
-      <!-- حلقة داخلية منقطة -->
-      <circle cx="130" cy="130" r="98" fill="none" stroke="#8c6200" stroke-width="2" stroke-dasharray="6 4"/>
-      <!-- النص في المنتصف -->
-      <text x="130" y="148" font-family="Arial, sans-serif" font-weight="900" font-size="56" fill="#4a3200" text-anchor="middle" letter-spacing="2">MDO</text>
-      <text x="130" y="175" font-family="Arial, sans-serif" font-weight="bold" font-size="13" fill="#6e4b00" text-anchor="middle" letter-spacing="3">OFFICIAL TOKEN</text>
-    </svg>
-  </div>
-
-  <div class="energy">
-    <div class="energy-top"><span>ENERGY</span><span><span id="en">1000</span> / 1000</span></div>
-    <div class="bar"><div class="fill" id="fill"></div></div>
-    <div class="small">+1 energy every 6s</div>
-  </div>
-
-  <div class="streak">
-    <div class="streak-top"><span>DAILY STREAK</span><span>Day 1 / 7</span></div>
-    <div class="days">
-      <div class="day"><div class="circle done">✓</div>D1<br>0.500</div>
-      <div class="day"><div class="circle">○</div>D2<br>1</div>
-      <div class="day"><div class="circle">○</div>D3<br>2</div>
-      <div class="day"><div class="circle">○</div>D4<br>3.5</div>
-      <div class="day"><div class="circle">○</div>D5<br>5</div>
-      <div class="day"><div class="circle">○</div>D6<br>7.5</div>
-      <div class="day"><div class="circle">○</div>D7<br>25</div>
+<!-- MINE PAGE -->
+<div id="page-mine" class="page active">
+  <div class="header">
+    <div class="user-info">
+      <h3><span id="tgUser">@MDO_Miner</span> <span class="verified">✔</span></h3>
+      <div class="status-row">
+        <span class="lvl-badge">👑 Lvl <span id="lvlNum">1</span></span>
+        <span class="online-badge"><span class="dot"></span> ONLINE</span>
+      </div>
+      <div class="lvl-prog">Tap or Claim to Lvl UP ›</div>
+    </div>
+    <div class="right-info">
+      <div class="wallet-pill">MDO...Pool ▾</div>
+      <div class="uid-pill">💠 UID <span id="uidNum">665545237</span></div>
     </div>
   </div>
-  <button class="claim">CLAIMED TODAY</button>
-</div>
 
-<div id="page-earn" class="page"><h2>⚡ EARN</h2><br>
-  <div class="task"><span>تابعنا على تليجرام<br><b>+ 5 MDO</b></span><button onclick="doTask(this,5)">Claim</button></div>
-  <div class="task"><span>ادعو صديق<br><b>+ 10 MDO</b></span><button onclick="doTask(this,10)">Claim</button></div>
-  <div class="task"><span>تعدين يومي<br><b>+ 2 MDO</b></span><button onclick="doTask(this,2)">Claim</button></div>
-</div>
-
-<div id="page-rank" class="page"><h2>🏆 RANK</h2><br>
-  <div class="task"><span>🥇 Ahmed - 1250 MDO</span><span>1</span></div>
-  <div class="task"><span>🥈 Sara - 980 MDO</span><span>2</span></div>
-  <div class="task"><span>🥉 You - <span class="mybal">0.500</span> MDO</span><span>3</span></div>
-</div>
-
-<div id="page-pack" class="page"><h2>🎁 PACK & BOOSTS</h2><br>
-  <div class="task">
-    <span>⚡ تعبئة الطاقة بالكامل<br><b>السعر: 2 MDO</b></span>
-    <button onclick="buyEnergy()">شراء</button>
+  <div class="assets-wrap">
+    <div class="assets-label">👑 ASSETS 👑</div>
+    <div class="assets-box">
+      <span class="assets-val" id="totalBal">0.5000</span>
+      <span class="assets-sym">MDO</span>
+    </div>
+    <br>
+    <div class="live-earn">
+      <span>📈 +<span id="pendingBal">0.0000</span></span>
+      <small>MDO</small>
+    </div>
   </div>
-  <div class="task">
-    <span>🚀 مضاعفة سرعة التعدين (+0.001/نقرة)<br><b>السعر: <span id="upCost">5</span> MDO</b></span>
-    <button onclick="upgradeSpeed()">ترقية</button>
-  </div>
-</div>
 
-<div id="page-p2p" class="page"><h2>🔄 P2P LAUNCH</h2><br><p>قريبا تقدر تبدل نقاط MDO الافتراضية داخل اللعبة</p></div>
+  <div class="arena">
+    <div class="side-btn btn-share" onclick="go('friends')">↪</div>
+    <div class="side-btn btn-live" onclick="alert('MDO Official Live Stream')">● LIVE<br>▶</div>
+    <div class="side-btn btn-left1" onclick="go('miners')">💠</div>
+    <div class="side-btn btn-left2" onclick="alert('Tap the MDO coin or wait for auto-mining, then press CLAIM!')">?</div>
 
-<div id="page-badges" class="page"><h2>🛡️ BADGES</h2><br>
-  <div class="task"><span>⛏️ MDO Miner</span><span>✓</span></div>
-  <div class="task"><span>👑 MDO Master (Level 5)</span><span id="masterBadge">🔒</span></div>
-</div>
-
-<div id="page-me" class="page"><h2>👤 ME</h2><br>
-  <p>رصيدك: <b><span id="bal2">0.500</span> MDO</b></p><br>
-  <p>قوة التعدين: <b>+<span id="powerTxt">0.001</span> MDO / نقرة</b></p><br>
-  <p>Energy: <span id="en2">1000</span></p>
-</div>
-
-<div class="nav">
-  <div id="nav-home" class="active" onclick="go('home')">🏠<br>HOME</div>
-  <div id="nav-earn" onclick="go('earn')">⚡<br>EARN</div>
-  <div id="nav-rank" onclick="go('rank')">🏆<br>RANK</div>
-  <div id="nav-pack" onclick="go('pack')">🎁<br>PACK</div>
-  <div id="nav-p2p" onclick="go('p2p')">🔄<br>P2P<br>LAUNCH</div>
-  <div id="nav-badges" onclick="go('badges')">🛡️<br>BADGES</div>
-  <div id="nav-me" onclick="go('me')">👤<br>ME</div>
-</div>
-
-<script>
-let bal = parseFloat(localStorage.getItem('mdo_bal') || 0.5);
-let en = parseInt(localStorage.getItem('mdo_en') || 1000);
-let lvl = parseInt(localStorage.getItem('mdo_lvl') || 1);
-
-let tg = window.Telegram?.WebApp; 
-if(tg){ tg.ready(); tg.expand(); }
-
-function upd(){
-  let power = (lvl * 0.001).toFixed(3);
-  let cost = lvl * 5;
-  
-  document.getElementById('bal').innerText = bal.toFixed(3);
-  document.getElementById('bal2').innerText = bal.toFixed(3);
-  document.querySelector('.mybal').innerText = bal.toFixed(3);
-  document.getElementById('en').innerText = en;
-  document.getElementById('en2').innerText = en;
-  document.getElementById('lvl').innerText = lvl;
-  document.getElementById('powerTxt').innerText = power;
-  document.getElementById('upCost').innerText = cost;
-  document.getElementById('fill').style.width = (en / 10) + '%';
-  
-  if(lvl >= 5) document.getElementById('masterBadge').innerText = '✓';
-
-  localStorage.setItem('mdo_bal', bal);
-  localStorage.setItem('mdo_en', en);
-  localStorage.setItem('mdo_lvl', lvl);
-}
-
-function mine(e){
-  if(en <= 0){ alert('خلصت الطاقة! استنى شوية أو اشترِ طاقة من PACK'); return; }
-  let gain = lvl * 0.001;
-  en--;
-  bal += gain;
-  
-  let s = document.createElement('div');
-  s.style.cssText = 'position:fixed;left:'+(e.clientX-20)+'px;top:'+(e.clientY-20)+'px;color:#f5c542;font-weight:900;font-size:22px;z-index:999;pointer-events:none;animation:floatUp 0.6s ease-out forwards';
-  s.innerText = '+' + gain.toFixed(3);
-  document.body.appendChild(s);
-  setTimeout(() => s.remove(), 600);
-  upd();
-}
-
-function buyEnergy(){
-  if(bal < 2){ alert('رصيدك من MDO غير كافٍ!'); return; }
-  if(en >= 1000){ alert('طاقتك ممتلئة بالفعل!'); return; }
-  bal -= 2;
-  en = 1000;
-  upd();
-  alert('تمت تعبئة الطاقة بنجاح! ⚡');
-}
-
-function upgradeSpeed(){
-  let cost = lvl * 5;
-  if(bal < cost){ alert('تحتاج إلى ' + cost + ' MDO للترقية!'); return; }
-  bal -= cost;
-  lvl++;
-  upd();
-  alert('مبروك! تمت ترقية سرعة التعدين إلى المستوى ' + lvl + ' 🚀');
-}
-
-function go(name){
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('page-' + name).classList.add('active');
-  document.querySelectorAll('.nav div').forEach(d => d.classList.remove('active'));
-  document.getElementById('nav-' + name).classList.add('active');
-  window.scrollTo(0, 0);
-}
-
-function doTask(btn, amt){
-  bal += amt;
-  upd();
-  
+    <div class="coin-btn" onclick="tapCoin(event)">
+      <svg width="215" height="215" viewBox="0 0 260 260">
+        <defs>
+          <radialGradient id="coinGold" cx="40%" cy="35%" r="65%">
+            <stop offset="0%" stop-color="#fff5b8"/>
+            <stop offset="40%" stop-color="#f5c542"/>
+            <stop offset="85%" stop-color="#9e6d05"/>
+            <stop offset="100%" stop-color="#5c3d00"/>
+          </radialGradient>
+        </defs>
+        <circle cx="130" cy="130" r="126" fill="#7a5200" stroke="#ffe680" stroke-width="3"/>
+        <circle cx="130" cy="130" r="114" fill="url(#coinGold)" stroke="#5c3d00" stroke-width="3"/>
+        <circle cx="130" cy="130" r="98" fill="none" stroke="#6e4900" stroke-width="4" stroke-dasharray="4 6"/>
+        
